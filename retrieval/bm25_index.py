@@ -29,6 +29,11 @@ class BM25Index:
 
     def build(self, corpus: list[dict]) -> None:
         """corpus: list of {chunk_id: int, content: str}"""
+        if not corpus:
+            self._ids = []
+            self._texts = []
+            self._bm25 = None
+            return
         self._ids = [c["chunk_id"] for c in corpus]
         self._texts = [c["content"] for c in corpus]
         tokenised = [self._tokenise(t) for t in self._texts]
