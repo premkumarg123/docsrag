@@ -78,7 +78,8 @@ class LLMJudge:
             max_tokens=256,
             messages=[{"role": "user", "content": prompt}],
         )
-        raw = response.content[0].text.strip()
+        block = response.content[0]
+        raw = (block.text if hasattr(block, "text") else "").strip()  # type: ignore[union-attr]
         try:
             data = json.loads(raw)
             return JudgeScore(score=float(data["score"]), reason=data.get("reason", ""))

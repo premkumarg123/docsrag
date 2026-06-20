@@ -41,5 +41,6 @@ class QueryRewriter:
                 }
             ],
         )
-        rewritten = message.content[0].text.strip()
+        block = message.content[0]
+        rewritten = (block.text if hasattr(block, "text") else "").strip()  # type: ignore[union-attr]
         return rewritten if rewritten else question

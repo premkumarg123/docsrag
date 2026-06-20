@@ -65,6 +65,7 @@ class VectorStore:
         with self._cursor() as cur:
             cur.execute(sql, (name, source_uri, mime_type, psycopg2.extras.Json(metadata or {})))
             doc_id = cur.fetchone()["id"]
+        assert self._conn is not None
         self._conn.commit()
         return doc_id
 
@@ -92,12 +93,14 @@ class VectorStore:
         with self._cursor() as cur:
             psycopg2.extras.execute_values(cur, sql, records, fetch=True)
             ids = [row["id"] for row in cur.fetchall()]
+        assert self._conn is not None
         self._conn.commit()
         return ids
 
     def delete_document(self, document_id: int) -> None:
         with self._cursor() as cur:
             cur.execute("DELETE FROM documents WHERE id = %s", (document_id,))
+        assert self._conn is not None
         self._conn.commit()
 
     # ------------------------------------------------------------------

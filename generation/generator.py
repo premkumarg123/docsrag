@@ -48,7 +48,8 @@ class RAGGenerator:
             messages=[{"role": "user", "content": user_msg}],
         )
 
-        answer = response.content[0].text
+        block = response.content[0]
+        answer = block.text if hasattr(block, "text") else ""  # type: ignore[union-attr]
         citations = self._extract_citations(answer)
 
         return GeneratedAnswer(
