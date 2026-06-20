@@ -24,11 +24,12 @@ CREATE TABLE IF NOT EXISTS chunks (
     created_at  TIMESTAMPTZ DEFAULT NOW()
 );
 
--- IVFFlat index for approximate nearest-neighbour search
--- Lists tuned for collections up to ~1M chunks
+-- HNSW index for approximate nearest-neighbour search.
+-- Unlike IVFFlat, HNSW updates incrementally so it works correctly
+-- even when the index is created before data is inserted.
 CREATE INDEX IF NOT EXISTS chunks_embedding_idx
-    ON chunks USING ivfflat (embedding vector_cosine_ops)
-    WITH (lists = 100);
+    ON chunks USING hnsw (embedding vector_cosine_ops)
+    WITH (m = 16, ef_construction = 64);
 
 -- Full-text search index for BM25 hybrid fallback
 CREATE INDEX IF NOT EXISTS chunks_content_fts

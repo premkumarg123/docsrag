@@ -9,10 +9,15 @@ import os
 
 import pytest
 
-# Skip entire module if no DATABASE_URL is set (CI without DB service)
+# Skip entire module if no DATABASE_URL is set
 pytestmark = pytest.mark.skipif(
     not os.getenv("DATABASE_URL"),
     reason="DATABASE_URL not set — skipping integration tests",
+)
+
+needs_api_key = pytest.mark.skipif(
+    not os.getenv("ANTHROPIC_API_KEY"),
+    reason="ANTHROPIC_API_KEY not set — skipping LLM integration tests",
 )
 
 
@@ -42,10 +47,10 @@ def test_ingest_and_retrieve(pipeline):
     assert len(chunks) >= 1
     assert any("retrieval" in c["content"].lower() or "rag" in c["content"].lower() for c in chunks)
 
-    # Cleanup
     pipeline.vector_store.delete_document(doc_id)
 
 
+@needs_api_key
 def test_full_query_pipeline(pipeline):
     doc_id, _ = pipeline.ingest_text(
         text=(
@@ -63,12 +68,12 @@ def test_full_query_pipeline(pipeline):
     pipeline.vector_store.delete_document(doc_id)
 
 
+@needs_api_key
 def test_eval_metrics_pass_threshold(pipeline):
     """Regression gate: composite score must stay above 0.6 on sample dataset."""
     from eval.harness import EvalHarness
     from eval.judge import LLMJudge
 
-    # Seed docs matching the sample QA dataset questions
     doc_texts = [
         "RAG combines retrieval with generation to produce grounded answers from documents.",
         "Hybrid search uses BM25 and vector similarity with RRF fusion for better recall.",
