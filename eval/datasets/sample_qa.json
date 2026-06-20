@@ -1,0 +1,27 @@
+[
+  {
+    "question": "What is Retrieval-Augmented Generation (RAG)?",
+    "relevant_chunk_ids": [1, 2],
+    "reference_answer": "RAG is a technique that combines information retrieval with language model generation. It first retrieves relevant passages from a corpus, then uses them as context for an LLM to produce grounded answers."
+  },
+  {
+    "question": "How does hybrid search improve retrieval quality?",
+    "relevant_chunk_ids": [3, 4],
+    "reference_answer": "Hybrid search combines dense vector similarity with sparse BM25 keyword matching. Reciprocal Rank Fusion merges both ranked lists, capturing both semantic and lexical relevance."
+  },
+  {
+    "question": "What is the purpose of a cross-encoder reranker?",
+    "relevant_chunk_ids": [5],
+    "reference_answer": "A cross-encoder reads the query and document together and scores their relevance jointly, providing higher precision than bi-encoder models which embed query and document independently."
+  },
+  {
+    "question": "Why is evaluation important in RAG systems?",
+    "relevant_chunk_ids": [6, 7],
+    "reference_answer": "Without evaluation, retrieval quality and generation faithfulness can silently degrade. Automated eval harnesses catch regressions in recall, MRR, and faithfulness before they reach production."
+  },
+  {
+    "question": "What are the key metrics for measuring retrieval performance?",
+    "relevant_chunk_ids": [8],
+    "reference_answer": "Key retrieval metrics include Recall@k (fraction of relevant documents in top-k), MRR (position of first relevant result), and NDCG@k (normalised discounted cumulative gain)."
+  }
+]

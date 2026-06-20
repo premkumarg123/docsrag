@@ -1,0 +1,35 @@
+# Environment
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+htmlcov/
+.coverage
+coverage.xml
+
+# Models cache (large files, don't commit)
+~/.cache/huggingface/
+sentence_transformers/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# macOS
+.DS_Store
+
+# Docker volumes
+pgdata/
+
+# Logs
+*.log

@@ -1,0 +1,61 @@
+name: Eval Regression
+
+on:
+  schedule:
+    # Run every Monday at 08:00 UTC
+    - cron: "0 8 * * 1"
+  workflow_dispatch:
+    inputs:
+      run_name:
+        description: "Name for this eval run"
+        default: "scheduled"
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: docsrag
+          POSTGRES_PASSWORD: docsrag
+          POSTGRES_DB: docsrag
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run DB migrations
+        run: psql $DATABASE_URL -f migrations/001_init.sql
+        env:
+          DATABASE_URL: postgresql://docsrag:docsrag@localhost:5432/docsrag
+
+      - name: Seed sample documents
+        run: python scripts/seed_sample_docs.py
+        env:
+          DATABASE_URL: postgresql://docsrag:docsrag@localhost:5432/docsrag
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Run eval regression test
+        run: |
+          pytest tests/integration/test_pipeline.py::test_eval_metrics_pass_threshold \
+            -v --tb=short
+        env:
+          DATABASE_URL: postgresql://docsrag:docsrag@localhost:5432/docsrag
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

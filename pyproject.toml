@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "docsrag"
+version = "1.0.0"
+description = "Production RAG pipeline with hybrid search, reranking, and evaluation harness"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+markers = [
+    "integration: marks tests that require a live database (skip without DATABASE_URL)",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+select = ["E", "F", "I", "UP"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = false
+ignore_missing_imports = true
+
+[tool.coverage.run]
+source = ["ingestion", "retrieval", "generation", "eval", "api", "pipeline"]
+omit = ["tests/*", "scripts/*"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 70

@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Lint (ruff)
+        run: ruff check .
+
+      - name: Type check (mypy)
+        run: mypy ingestion retrieval generation eval api pipeline.py --ignore-missing-imports
+
+      - name: Unit tests
+        run: pytest tests/unit/ -v --tb=short --cov=. --cov-report=term-missing
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    needs: lint-and-unit-tests
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: docsrag
+          POSTGRES_PASSWORD: docsrag
+          POSTGRES_DB: docsrag
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run DB migrations
+        run: psql $DATABASE_URL -f migrations/001_init.sql
+        env:
+          DATABASE_URL: postgresql://docsrag:docsrag@localhost:5432/docsrag
+
+      - name: Integration tests
+        run: pytest tests/integration/ -v --tb=short
+        env:
+          DATABASE_URL: postgresql://docsrag:docsrag@localhost:5432/docsrag
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
