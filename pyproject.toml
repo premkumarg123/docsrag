@@ -30,8 +30,8 @@ ignore_missing_imports = true
 exclude = ["site-packages"]
 
 [[tool.mypy.overrides]]
-module = ["transformers.*", "sentence_transformers.*", "rank_bm25.*", "psycopg2.*"]
-ignore_errors = true
+module = ["transformers.*", "sentence_transformers.*", "rank_bm25.*", "psycopg2.*", "pypdf.*", "anthropic.*"]
+follow_imports = "skip"
 
 [tool.coverage.run]
 source = ["ingestion", "retrieval", "generation", "eval", "api", "pipeline"]

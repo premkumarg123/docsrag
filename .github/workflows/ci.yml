@@ -25,7 +25,7 @@ jobs:
         run: ruff check .
 
       - name: Type check (mypy)
-        run: mypy ingestion retrieval generation eval api pipeline.py --ignore-missing-imports
+        run: mypy ingestion retrieval generation eval api pipeline.py --ignore-missing-imports --exclude "site-packages"
 
       - name: Unit tests
         run: pytest tests/unit/ -v --tb=short --cov=. --cov-report=term-missing
