@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
 from pydantic import BaseModel, Field
-
 
 # ── Ingest ──────────────────────────────────────────────────────────────────
 
@@ -23,7 +21,7 @@ class IngestResponse(BaseModel):
 class DocumentListItem(BaseModel):
     id: int
     name: str
-    source_uri: Optional[str]
+    source_uri: str | None
     mime_type: str
     created_at: str
 
@@ -46,10 +44,10 @@ class CitedChunk(BaseModel):
 
 class QueryResponse(BaseModel):
     question: str
-    rewritten_question: Optional[str]
+    rewritten_question: str | None
     answer: str
-    citations: List[int]
-    context_chunks: List[CitedChunk]
+    citations: list[int]
+    context_chunks: list[CitedChunk]
     model: str
     input_tokens: int
     output_tokens: int

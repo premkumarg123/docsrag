@@ -6,6 +6,7 @@ Set DATABASE_URL env var before running:
 """
 
 import os
+
 import pytest
 
 # Skip entire module if no DATABASE_URL is set (CI without DB service)

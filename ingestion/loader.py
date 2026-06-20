@@ -5,14 +5,13 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass
 class RawDocument:
     name: str
     content: str
-    source_uri: Optional[str] = None
+    source_uri: str | None = None
     mime_type: str = "text/plain"
     metadata: dict = field(default_factory=dict)
 

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List, Optional
 
 import psycopg2
 import psycopg2.extras
@@ -28,7 +27,7 @@ class VectorStore:
 
     def __init__(self, dsn: str) -> None:
         self._dsn = dsn
-        self._conn: Optional[psycopg2.extensions.connection] = None
+        self._conn: psycopg2.extensions.connection | None = None
 
     # ------------------------------------------------------------------
     # Connection management
@@ -72,8 +71,8 @@ class VectorStore:
     def insert_chunks(
         self,
         document_id: int,
-        chunks: List[dict],  # {content, embedding, chunk_index, token_count, metadata}
-    ) -> List[int]:
+        chunks: list[dict],  # {content, embedding, chunk_index, token_count, metadata}
+    ) -> list[int]:
         sql = """
             INSERT INTO chunks (document_id, chunk_index, content, embedding, token_count, metadata)
             VALUES %s
@@ -107,10 +106,10 @@ class VectorStore:
 
     def similarity_search(
         self,
-        query_embedding: List[float],
+        query_embedding: list[float],
         top_k: int = 10,
         document_id: int | None = None,
-    ) -> List[ChunkResult]:
+    ) -> list[ChunkResult]:
         """Return top-k chunks ordered by cosine similarity (highest first)."""
         filter_clause = "AND c.document_id = %s" if document_id else ""
         params: list = [str(query_embedding), top_k]
@@ -166,7 +165,7 @@ class VectorStore:
             metadata=row["metadata"] or {},
         )
 
-    def list_documents(self) -> List[dict]:
+    def list_documents(self) -> list[dict]:
         with self._cursor() as cur:
             cur.execute(
                 "SELECT id, name, source_uri, mime_type, metadata, created_at FROM documents ORDER BY created_at DESC"

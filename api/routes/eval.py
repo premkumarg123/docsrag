@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from api.models import EvalRequest, EvalResponse
 from api.deps import get_pipeline
+from api.models import EvalRequest, EvalResponse
 from eval.harness import EvalHarness
 from eval.judge import LLMJudge
 
@@ -26,7 +26,6 @@ def run_eval(body: EvalRequest, pipeline=Depends(get_pipeline)):
         raise HTTPException(status_code=404, detail=f"Dataset not found: {body.dataset_path}")
 
     report = harness.run(cases, run_name=body.run_name)
-    summary = report.to_dict()
 
     return EvalResponse(
         run_name=report.run_name,

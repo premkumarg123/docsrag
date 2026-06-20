@@ -6,16 +6,15 @@ import json
 import statistics
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List
 
-from eval.metrics import retrieval_metrics
 from eval.judge import LLMJudge
+from eval.metrics import retrieval_metrics
 
 
 @dataclass
 class EvalCase:
     question: str
-    relevant_chunk_ids: List[int]
+    relevant_chunk_ids: list[int]
     reference_answer: str = ""
 
 
@@ -36,7 +35,7 @@ class HarnessReport:
     avg_faithfulness: float
     avg_relevance: float
     avg_composite: float
-    per_case: List[EvalResult] = field(default_factory=list)
+    per_case: list[EvalResult] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -67,7 +66,7 @@ class EvalHarness:
         self.pipeline = pipeline
         self.judge = judge or LLMJudge()
 
-    def load_dataset(self, path: str | Path) -> List[EvalCase]:
+    def load_dataset(self, path: str | Path) -> list[EvalCase]:
         data = json.loads(Path(path).read_text())
         return [
             EvalCase(
@@ -78,8 +77,8 @@ class EvalHarness:
             for item in data
         ]
 
-    def run(self, cases: List[EvalCase], run_name: str = "default") -> HarnessReport:
-        results: List[EvalResult] = []
+    def run(self, cases: list[EvalCase], run_name: str = "default") -> HarnessReport:
+        results: list[EvalResult] = []
 
         for case in cases:
             chunks = self.pipeline.retrieve(case.question)

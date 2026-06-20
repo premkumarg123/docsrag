@@ -7,7 +7,6 @@ from dataclasses import dataclass
 
 import anthropic
 
-
 FAITHFULNESS_PROMPT = """\
 You are an evaluation judge. Score whether the ANSWER is faithfully grounded \
 in the CONTEXT (no hallucinated facts outside the context).

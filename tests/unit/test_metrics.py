@@ -1,7 +1,8 @@
 """Unit tests for retrieval metrics."""
 
 import pytest
-from eval.metrics import recall_at_k, mrr, ndcg_at_k, retrieval_metrics
+
+from eval.metrics import mrr, ndcg_at_k, recall_at_k, retrieval_metrics
 
 
 def test_recall_at_k_perfect():

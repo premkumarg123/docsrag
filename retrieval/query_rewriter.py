@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import anthropic
 
-
 REWRITE_PROMPT = """\
 You are a search query optimizer. Given a user question, rewrite it into a \
 clear, dense retrieval query that maximises recall from a text corpus.

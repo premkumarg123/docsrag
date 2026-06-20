@@ -5,8 +5,8 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 
-from api.models import QueryRequest, QueryResponse, CitedChunk
 from api.deps import get_pipeline
+from api.models import CitedChunk, QueryRequest, QueryResponse
 
 router = APIRouter(prefix="/query", tags=["query"])
 

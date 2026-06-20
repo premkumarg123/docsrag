@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List
 
-from retrieval.vector_store import VectorStore, ChunkResult
 from retrieval.bm25_index import BM25Index
+from retrieval.vector_store import VectorStore
 
 
 @dataclass
@@ -37,13 +36,13 @@ class HybridSearcher:
 
     def search(
         self,
-        query_embedding: List[float],
+        query_embedding: list[float],
         query_text: str,
         top_k: int = 10,
         vector_weight: float = 0.7,
         bm25_weight: float = 0.3,
         fetch_k: int = 40,
-    ) -> List[SearchResult]:
+    ) -> list[SearchResult]:
         # Retrieve from both sources
         vec_results = self._vs.similarity_search(query_embedding, top_k=fetch_k)
         bm25_results = self._bm25.search(query_text, top_k=fetch_k)

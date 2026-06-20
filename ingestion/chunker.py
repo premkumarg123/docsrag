@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List
 
 
 @dataclass
@@ -28,13 +27,13 @@ class RecursiveChunker:
         self,
         chunk_size: int = 512,
         chunk_overlap: int = 64,
-        separators: List[str] | None = None,
+        separators: list[str] | None = None,
     ) -> None:
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
         self.separators = separators or self.DEFAULT_SEPARATORS
 
-    def chunk(self, text: str, metadata: dict | None = None) -> List[Chunk]:
+    def chunk(self, text: str, metadata: dict | None = None) -> list[Chunk]:
         metadata = metadata or {}
         raw_chunks = self._split(text, self.separators)
         merged = self._merge_with_overlap(raw_chunks)
@@ -51,7 +50,7 @@ class RecursiveChunker:
 
     # ------------------------------------------------------------------
 
-    def _split(self, text: str, separators: List[str]) -> List[str]:
+    def _split(self, text: str, separators: list[str]) -> list[str]:
         if not separators:
             return [text]
 
@@ -63,7 +62,7 @@ class RecursiveChunker:
 
         parts = [p for p in text.split(sep) if p.strip()]
 
-        final: List[str] = []
+        final: list[str] = []
         for part in parts:
             if self._approx_tokens(part) <= self.chunk_size:
                 final.append(part.strip())
@@ -71,11 +70,11 @@ class RecursiveChunker:
                 final.extend(self._split(part, rest))
         return final
 
-    def _merge_with_overlap(self, pieces: List[str]) -> List[str]:
+    def _merge_with_overlap(self, pieces: list[str]) -> list[str]:
         """Greedily merge small pieces; add overlap window between chunks."""
-        chunks: List[str] = []
+        chunks: list[str] = []
         current_tokens = 0
-        current_parts: List[str] = []
+        current_parts: list[str] = []
 
         for piece in pieces:
             piece_tokens = self._approx_tokens(piece)
@@ -93,9 +92,9 @@ class RecursiveChunker:
 
         return chunks
 
-    def _tail_overlap(self, parts: List[str]) -> List[str]:
+    def _tail_overlap(self, parts: list[str]) -> list[str]:
         """Return the last N tokens worth of parts for overlap."""
-        kept: List[str] = []
+        kept: list[str] = []
         tokens = 0
         for part in reversed(parts):
             t = self._approx_tokens(part)

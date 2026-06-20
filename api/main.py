@@ -7,7 +7,8 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import ingest, query, eval as eval_route
+from api.routes import eval as eval_route
+from api.routes import ingest, query
 
 logging.basicConfig(level=logging.INFO)
 

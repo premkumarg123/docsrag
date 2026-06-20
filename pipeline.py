@@ -7,17 +7,17 @@ Wires together: ingestion → embedding → storage → BM25 → hybrid search
 
 from __future__ import annotations
 
-from typing import Generator, List, Tuple
+from collections.abc import Generator
 
-from ingestion.loader import DocumentLoader
+from generation.generator import RAGGenerator
 from ingestion.chunker import RecursiveChunker
 from ingestion.embedder import Embedder
-from retrieval.vector_store import VectorStore
+from ingestion.loader import DocumentLoader
 from retrieval.bm25_index import BM25Index
 from retrieval.hybrid_search import HybridSearcher
-from retrieval.reranker import CrossEncoderReranker
 from retrieval.query_rewriter import QueryRewriter
-from generation.generator import RAGGenerator, GeneratedAnswer
+from retrieval.reranker import CrossEncoderReranker
+from retrieval.vector_store import VectorStore
 
 
 class RAGPipeline:
@@ -62,7 +62,7 @@ class RAGPipeline:
         text: str,
         name: str,
         metadata: dict | None = None,
-    ) -> Tuple[int, int]:
+    ) -> tuple[int, int]:
         doc = self.loader.load_text(text, name=name)
         return self._ingest_doc(doc, metadata)
 
@@ -71,13 +71,13 @@ class RAGPipeline:
         path: str,
         name: str | None = None,
         metadata: dict | None = None,
-    ) -> Tuple[int, int]:
+    ) -> tuple[int, int]:
         doc = self.loader.load(path)
         if name:
             doc.name = name
         return self._ingest_doc(doc, metadata)
 
-    def _ingest_doc(self, doc, metadata: dict | None) -> Tuple[int, int]:
+    def _ingest_doc(self, doc, metadata: dict | None) -> tuple[int, int]:
         chunks = self.chunker.chunk(doc.content, metadata=metadata or {})
         texts = [c.content for c in chunks]
         embeddings = self.embedder.embed(texts)
@@ -119,7 +119,7 @@ class RAGPipeline:
         top_k: int | None = None,
         rewrite: bool = True,
         rerank: bool = True,
-    ) -> List[dict]:
+    ) -> list[dict]:
         k = top_k or self._top_k_retrieve
 
         if rewrite:
@@ -146,7 +146,7 @@ class RAGPipeline:
     # Generation
     # ------------------------------------------------------------------
 
-    def answer(self, question: str, chunks: List[dict]) -> str:
+    def answer(self, question: str, chunks: list[dict]) -> str:
         result = self.generator.generate(question, chunks)
         return result.answer
 

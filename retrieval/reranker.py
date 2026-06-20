@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List
 
 from retrieval.hybrid_search import SearchResult
 
@@ -41,14 +40,14 @@ class CrossEncoderReranker:
     def rerank(
         self,
         query: str,
-        results: List[SearchResult],
+        results: list[SearchResult],
         top_k: int = 5,
-    ) -> List[RerankedResult]:
+    ) -> list[RerankedResult]:
         if not results:
             return []
 
         pairs = [(query, r.content) for r in results]
-        scores: List[float] = self.model.predict(pairs).tolist()
+        scores: list[float] = self.model.predict(pairs).tolist()
 
         ranked = sorted(
             zip(results, scores), key=lambda x: x[1], reverse=True

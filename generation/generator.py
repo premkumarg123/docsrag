@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Generator
 from dataclasses import dataclass, field
-from typing import Generator, List
 
 import anthropic
 
@@ -14,11 +14,11 @@ from generation.prompts import SYSTEM_PROMPT, USER_PROMPT, build_context_block
 @dataclass
 class GeneratedAnswer:
     answer: str
-    citations: List[int]          # chunk_ids cited
+    citations: list[int]          # chunk_ids cited
     model: str
     input_tokens: int
     output_tokens: int
-    context_chunks: List[dict] = field(default_factory=list)
+    context_chunks: list[dict] = field(default_factory=list)
 
 
 class RAGGenerator:
@@ -33,7 +33,7 @@ class RAGGenerator:
         self.model = model
         self.max_tokens = max_tokens
 
-    def generate(self, question: str, chunks: List[dict]) -> GeneratedAnswer:
+    def generate(self, question: str, chunks: list[dict]) -> GeneratedAnswer:
         """Blocking generation. chunks: [{chunk_id, content}, ...]"""
         context_block = build_context_block(chunks)
         user_msg = USER_PROMPT.format(
@@ -63,7 +63,7 @@ class RAGGenerator:
     def stream(
         self,
         question: str,
-        chunks: List[dict],
+        chunks: list[dict],
     ) -> Generator[str, None, None]:
         """Yield text deltas for streaming responses."""
         context_block = build_context_block(chunks)
@@ -78,10 +78,9 @@ class RAGGenerator:
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": user_msg}],
         ) as stream:
-            for text in stream.text_stream:
-                yield text
+            yield from stream.text_stream
 
     @staticmethod
-    def _extract_citations(text: str) -> List[int]:
+    def _extract_citations(text: str) -> list[int]:
         """Pull all [N] style citation markers from the answer text."""
         return [int(m) for m in re.findall(r"\[(\d+)\]", text)]

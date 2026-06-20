@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List
 
 from rank_bm25 import BM25Okapi
 
@@ -24,18 +23,18 @@ class BM25Index:
     """
 
     def __init__(self) -> None:
-        self._ids: List[int] = []
-        self._texts: List[str] = []
+        self._ids: list[int] = []
+        self._texts: list[str] = []
         self._bm25: BM25Okapi | None = None
 
-    def build(self, corpus: List[dict]) -> None:
+    def build(self, corpus: list[dict]) -> None:
         """corpus: list of {chunk_id: int, content: str}"""
         self._ids = [c["chunk_id"] for c in corpus]
         self._texts = [c["content"] for c in corpus]
         tokenised = [self._tokenise(t) for t in self._texts]
         self._bm25 = BM25Okapi(tokenised)
 
-    def search(self, query: str, top_k: int = 10) -> List[BM25Result]:
+    def search(self, query: str, top_k: int = 10) -> list[BM25Result]:
         if self._bm25 is None or not self._ids:
             return []
 
@@ -55,5 +54,5 @@ class BM25Index:
         ]
 
     @staticmethod
-    def _tokenise(text: str) -> List[str]:
+    def _tokenise(text: str) -> list[str]:
         return text.lower().split()

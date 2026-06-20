@@ -2,9 +2,6 @@
 
 from __future__ import annotations
 
-from functools import lru_cache
-from typing import List
-
 import numpy as np
 
 
@@ -34,7 +31,7 @@ class Embedder:
     def dim(self) -> int:
         return self.model.get_sentence_embedding_dimension()
 
-    def embed(self, texts: List[str]) -> List[List[float]]:
+    def embed(self, texts: list[str]) -> list[list[float]]:
         """Return L2-normalised embeddings as plain Python lists."""
         if not texts:
             return []
@@ -46,5 +43,5 @@ class Embedder:
         )
         return vecs.tolist()
 
-    def embed_one(self, text: str) -> List[float]:
+    def embed_one(self, text: str) -> list[float]:
         return self.embed([text])[0]

@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-import io
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 
-from api.models import IngestResponse, DocumentListItem, IngestTextRequest
 from api.deps import get_pipeline
+from api.models import DocumentListItem, IngestResponse, IngestTextRequest
 
 router = APIRouter(prefix="/ingest", tags=["ingest"])
 
@@ -42,7 +41,8 @@ async def ingest_file(
     raw_bytes = await file.read()
 
     # Write to a temp file so loaders can use path-based APIs
-    import tempfile, os
+    import os
+    import tempfile
     with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
         tmp.write(raw_bytes)
         tmp_path = tmp.name

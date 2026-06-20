@@ -1,10 +1,9 @@
 """Unit tests for BM25 and RRF fusion logic."""
 
-import pytest
 from unittest.mock import MagicMock
+
 from retrieval.bm25_index import BM25Index
 from retrieval.hybrid_search import HybridSearcher
-
 
 # ── BM25 ─────────────────────────────────────────────────────────────────────
 
@@ -39,8 +38,8 @@ def test_rrf_combines_results():
     mock_vs = MagicMock()
     mock_bm25 = MagicMock()
 
-    from retrieval.vector_store import ChunkResult
     from retrieval.bm25_index import BM25Result
+    from retrieval.vector_store import ChunkResult
 
     mock_vs.similarity_search.return_value = [
         ChunkResult(chunk_id=1, document_id=1, content="Doc A", score=0.9, metadata={}),

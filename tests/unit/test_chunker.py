@@ -1,6 +1,5 @@
 """Unit tests for the recursive chunker."""
 
-import pytest
 from ingestion.chunker import RecursiveChunker
 
 
